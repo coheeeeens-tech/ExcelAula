@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ExcelAula · Aprende Excel función por función</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;800&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<style>
+:root{--ink:#14231b;--paper:#fbfcfa;--grid:#d3e2d9;--green:#1d6b45;--hl:#ffd84d;--muted:#52665a}
+@media (prefers-color-scheme:dark){:root{--ink:#e9f2ec;--paper:#0f1a14;--grid:#26382d;--green:#5fcf92;--hl:#e8b800;--muted:#9bb2a4}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 "IBM Plex Sans",system-ui,sans-serif;
+background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:48px 28px;background-attachment:fixed}
+main,header,footer{max-width:960px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:"Bricolage Grotesque",system-ui,sans-serif;line-height:1.1;margin:0}
+nav{display:flex;gap:20px;padding:20px 0;font-weight:600}
+nav a{color:var(--ink);text-decoration:none}nav a:first-child{margin-right:auto;font-family:"Bricolage Grotesque";font-size:1.3rem;font-weight:800}
+nav a:focus-visible,button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+.hero{padding:40px 0 56px;display:grid;gap:32px;grid-template-columns:1.1fr 1fr;align-items:center}
+.hero h1{font-size:clamp(2.4rem,6vw,4rem);font-weight:800}
+.hero p{max-width:46ch;color:var(--muted)}
+.xl{background:var(--paper);border:2px solid var(--green);border-radius:4px;overflow:hidden;font-size:.95rem}
+.fx{display:flex;border-bottom:2px solid var(--green);background:var(--paper)}
+.fx span{padding:6px 10px;background:var(--green);color:var(--paper);font-weight:600}
+.fx output{padding:6px 10px;font-family:ui-monospace,Menlo,monospace;flex:1;min-height:36px}
+table.g{border-collapse:collapse;width:100%}
+.g td,.g th{border:1px solid var(--grid);padding:0}
+.g th{background:var(--grid);font-weight:600;font-size:.8rem;padding:3px}
+.g button{all:unset;display:block;width:100%;padding:8px 10px;cursor:cell;box-sizing:border-box}
+.g button[aria-pressed=true]{background:var(--hl);color:#14231b;outline:2px solid var(--green);outline-offset:-2px}
+section{padding:36px 0}
+h2{font-size:2rem;margin-bottom:16px}
+.search{width:100%;padding:12px 14px;font:inherit;border:2px solid var(--green);border-radius:4px;background:var(--paper);color:var(--ink);margin-bottom:20px}
+.fn{background:var(--paper);border:1px solid var(--green);border-radius:4px;margin-bottom:12px}
+.fn summary{cursor:pointer;padding:14px 16px;font-weight:600;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline}
+.fn summary small{color:var(--muted);font-weight:400}
+.fn .b{padding:0 16px 16px}
+code{font-family:ui-monospace,Menlo,monospace;background:var(--grid);padding:2px 6px;border-radius:3px}
+.act{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.act a{display:block;padding:16px;background:var(--paper);border:1px solid var(--green);border-radius:4px;color:var(--ink);text-decoration:none}
+.act a:hover{background:var(--hl);color:#14231b}
+.act strong{display:block;font-family:"Bricolage Grotesque"}
+footer{padding:32px 20px;color:var(--muted)}
+body:not(.in) header,body:not(.in) main,body:not(.in) footer{display:none}
+body.in #login{display:none}
+#login{max-width:360px;margin:12vh auto;padding:28px;background:var(--paper);border:2px solid var(--green);border-radius:4px}
+#login h1{font-size:2rem;margin-bottom:6px}
+label{display:block;font-weight:600;margin-top:14px}
+.in-f{width:100%;padding:10px 12px;font:inherit;border:2px solid var(--green);border-radius:4px;background:var(--paper);color:var(--ink)}
+.btn{margin-top:18px;padding:10px 18px;font:inherit;font-weight:600;background:var(--green);color:var(--paper);border:0;border-radius:4px;cursor:pointer}
+.msg{min-height:1.5em;margin:10px 0 0}
+nav button{all:unset;cursor:pointer;font-weight:600}
+#teacher{background:var(--paper);border:1px solid var(--green);border-radius:4px;padding:20px}
+@media(max-width:720px){.hero{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="login"><h1>ExcelAula</h1><p>Entra con el ID y la contraseña que te dio tu profesor.</p>
+<form id="lform"><label for="lid">ID de alumno</label><input class="in-f" id="lid" autocomplete="username" required>
+<label for="lpw">Contraseña</label><input class="in-f" id="lpw" type="password" autocomplete="current-password" required>
+<button class="btn" type="submit">Entrar</button><p class="msg" id="lmsg" role="alert"></p></form></div>
+<header><nav><a href="#">ExcelAula</a><a href="#funciones">Funciones</a><a href="#actividades">Actividades</a><span id="who"></span><button id="logout" type="button">Salir</button></nav></header>
+<main>
+<div class="hero">
+<div><h1>Excel se aprende celda por celda.</h1>
+<p>Explicaciones claras de cada función, con su nombre en español e inglés, y actividades en Excel para practicar. Toca una celda y mira qué fórmula hay detrás.</p></div>
+<div class="xl" role="group" aria-label="Hoja de ejemplo">
+<div class="fx"><span>fx</span><output id="fx" aria-live="polite">Selecciona una celda</output></div>
+<table class="g" id="grid"></table></div>
+</div>
+
+<section id="teacher" hidden><h2>Alta de alumnos</h2>
+<form id="sform"><label for="sid">ID del alumno</label><input class="in-f" id="sid" required>
+<label for="spw">Contraseña (mínimo 6 caracteres)</label><input class="in-f" id="spw" required minlength="6">
+<button class="btn" type="submit">Crear alumno</button><p class="msg" id="smsg" role="status"></p></form></section>
+
+<section id="funciones"><h2>Funciones</h2>
+<input class="search" id="q" type="search" placeholder="Busca una función en español o inglés" aria-label="Buscar función">
+<div id="list"></div></section>
+
+<section id="actividades"><h2>Actividades</h2>
+<div class="act" id="acts"></div></section>
+</main>
+<footer>ExcelAula · Material de clase de Excel. Edita <code>index.html</code> para agregar funciones y actividades.</footer>
+<script>
+const FUNCS=[
+{es:"SUMA",en:"SUM",sin:"=SUMA(número1; [número2]; …)",d:"Suma los números de las celdas o rangos que indiques.",ej:"=SUMA(B2:B6)",r:"Suma todos los valores de B2 a B6."},
+{es:"PROMEDIO",en:"AVERAGE",sin:"=PROMEDIO(número1; [número2]; …)",d:"Calcula la media aritmética. Ignora las celdas vacías y el texto.",ej:"=PROMEDIO(B2:B6)",r:"Devuelve el promedio de B2 a B6."},
+{es:"SI",en:"IF",sin:"=SI(prueba_lógica; valor_si_verdadero; valor_si_falso)",d:"Evalúa una condición y devuelve un valor si se cumple y otro si no.",ej:'=SI(B2>=6;"Aprobado";"Reprobado")',r:'Muestra "Aprobado" si B2 es 6 o más.'},
+{es:"CONTAR.SI",en:"COUNTIF",sin:"=CONTAR.SI(rango; criterio)",d:"Cuenta las celdas de un rango que cumplen un criterio.",ej:'=CONTAR.SI(C2:C20;"Aprobado")',r:'Cuenta cuántos "Aprobado" hay en C2:C20.'},
+{es:"BUSCARV",en:"VLOOKUP",sin:"=BUSCARV(valor_buscado; matriz; columna; [ordenado])",d:"Busca un valor en la primera columna de una tabla y devuelve el dato de otra columna de la misma fila. Usa 0 al final para coincidencia exacta.",ej:"=BUSCARV(A2;F2:H20;3;0)",r:"Busca A2 en F2:F20 y devuelve el valor de la 3.ª columna."},
+{es:"BUSCARX",en:"XLOOKUP",sin:"=BUSCARX(valor_buscado; matriz_búsqueda; matriz_devuelta; [si_no_se_encuentra])",d:"Versión moderna de BUSCARV: busca en cualquier dirección y no depende del número de columna.",ej:'=BUSCARX(A2;F2:F20;H2:H20;"No existe")',r:'Devuelve el dato de H que corresponde a A2, o "No existe".'}
+];
+const ACTS=[
+{t:"Actividad 1 · SUMA y PROMEDIO",f:"actividades/actividad1_suma_promedio.xlsx",d:"Calcula totales y promedios de calificaciones."},
+{t:"Actividad 2 · SI y CONTAR.SI",f:"actividades/actividad2_si_contarsi.xlsx",d:"Decide aprobados y cuéntalos."}
+];
+const g=document.getElementById("grid"),fx=document.getElementById("fx");
+const data=[["Alumno","Parcial 1","Parcial 2","Promedio"],["Ana",8,9,"=PROMEDIO(B2:C2)"],["Luis",6,7,"=PROMEDIO(B3:C3)"],["Marta",10,9,"=PROMEDIO(B4:C4)"],["Total","=SUMA(B2:B4)","=SUMA(C2:C4)",""]];
+const val={B2:8,C2:9,B3:6,C3:7,B4:10,C4:9};
+function show(r,c){const v=data[r][c];if(typeof v!=="string"||v[0]!=="=")return String(v);
+const f=v.replace(/\(.*\)/,m=>m);return f}
+function calc(r,c){const v=data[r][c];if(typeof v==="number")return v;if(typeof v!=="string"||v[0]!=="=")return v;
+const rows=[];if(v.startsWith("=PROMEDIO")){return ((data[r][1]+data[r][2])/2).toFixed(1)}
+if(v.startsWith("=SUMA")){let s=0;for(let i=1;i<4;i++)s+=data[i][c];return s}return ""}
+let h="<tr><th></th>"+"ABCD".split("").map(x=>"<th>"+x+"</th>").join("")+"</tr>";
+data.forEach((row,r)=>{h+="<tr><th>"+(r+1)+"</th>"+row.map((_,c)=>`<td><button aria-pressed="false" data-r="${r}" data-c="${c}">${calc(r,c)}</button></td>`).join("")+"</tr>"});
+g.innerHTML=h;
+g.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+g.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");
+fx.textContent=show(+b.dataset.r,+b.dataset.c)||"(vacía)"});
+const list=document.getElementById("list");
+list.innerHTML=FUNCS.map(f=>`<details class="fn" data-k="${(f.es+" "+f.en).toLowerCase()}"><summary>${f.es}<small>en inglés: ${f.en}</small></summary><div class="b"><p>${f.d}</p><p><strong>Sintaxis:</strong> <code>${f.sin}</code></p><p><strong>Ejemplo:</strong> <code>${f.ej}</code><br>${f.r}</p></div></details>`).join("");
+document.getElementById("q").addEventListener("input",e=>{const q=e.target.value.toLowerCase().trim();
+list.querySelectorAll(".fn").forEach(d=>d.hidden=!d.dataset.k.includes(q))});
+document.getElementById("acts").innerHTML=ACTS.map(a=>`<a href="${a.f}" download><strong>${a.t}</strong>${a.d}</a>`).join("");
+</script>
+<script type="module" src="auth.js"></script>
+</body>
+</html>
