@@ -28,6 +28,7 @@ table.g{border-collapse:collapse;width:100%}
 .g th{background:var(--grid);font-weight:600;font-size:.8rem;padding:3px}
 .g button{all:unset;display:block;width:100%;padding:8px 10px;cursor:cell;box-sizing:border-box}
 .g button[aria-pressed=true]{background:var(--hl);color:#14231b;outline:2px solid var(--green);outline-offset:-2px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}.tabs button{padding:8px 16px;font:inherit;font-weight:600;border:2px solid var(--green);background:var(--paper);color:var(--ink);border-radius:4px;cursor:pointer}.tabs button[aria-pressed=true]{background:var(--green);color:var(--paper)}
 section{padding:36px 0}
 h2{font-size:2rem;margin-bottom:16px}
 .search{width:100%;padding:12px 14px;font:inherit;border:2px solid var(--green);border-radius:4px;background:var(--paper);color:var(--ink);margin-bottom:20px}
@@ -75,6 +76,9 @@ nav button{all:unset;cursor:pointer;font-weight:600}
 <button class="btn" type="submit">Crear alumno</button><p class="msg" id="smsg" role="status"></p></form></section>
 
 <section id="funciones"><h2>Funciones</h2>
+<div id="tabs" class="tabs"><button data-n="0" aria-pressed="true">Todas</button><button data-n="1" aria-pressed="false">Básico</button><button data-n="2" aria-pressed="false">Intermedio</button><button data-n="3" aria-pressed="false">Avanzado</button></div>
+<p id="cnt" aria-live="polite"></p>
+<p><small>Si tu Excel usa punto y coma como separador, cambia las comas de las fórmulas por <code>;</code>.</small></p>
 <input class="search" id="q" type="search" placeholder="Busca una función en español o inglés" aria-label="Buscar función">
 <div id="list"></div></section>
 
@@ -82,18 +86,11 @@ nav button{all:unset;cursor:pointer;font-weight:600}
 <div class="act" id="acts"></div></section>
 </main>
 <footer>ExcelAula · Material de clase de Excel. Edita <code>index.html</code> para agregar funciones y actividades.</footer>
+<script src="funciones.js"></script>
 <script>
-const FUNCS=[
-{es:"SUMA",en:"SUM",sin:"=SUMA(número1; [número2]; …)",d:"Suma los números de las celdas o rangos que indiques.",ej:"=SUMA(B2:B6)",r:"Suma todos los valores de B2 a B6."},
-{es:"PROMEDIO",en:"AVERAGE",sin:"=PROMEDIO(número1; [número2]; …)",d:"Calcula la media aritmética. Ignora las celdas vacías y el texto.",ej:"=PROMEDIO(B2:B6)",r:"Devuelve el promedio de B2 a B6."},
-{es:"SI",en:"IF",sin:"=SI(prueba_lógica; valor_si_verdadero; valor_si_falso)",d:"Evalúa una condición y devuelve un valor si se cumple y otro si no.",ej:'=SI(B2>=6;"Aprobado";"Reprobado")',r:'Muestra "Aprobado" si B2 es 6 o más.'},
-{es:"CONTAR.SI",en:"COUNTIF",sin:"=CONTAR.SI(rango; criterio)",d:"Cuenta las celdas de un rango que cumplen un criterio.",ej:'=CONTAR.SI(C2:C20;"Aprobado")',r:'Cuenta cuántos "Aprobado" hay en C2:C20.'},
-{es:"BUSCARV",en:"VLOOKUP",sin:"=BUSCARV(valor_buscado; matriz; columna; [ordenado])",d:"Busca un valor en la primera columna de una tabla y devuelve el dato de otra columna de la misma fila. Usa 0 al final para coincidencia exacta.",ej:"=BUSCARV(A2;F2:H20;3;0)",r:"Busca A2 en F2:F20 y devuelve el valor de la 3.ª columna."},
-{es:"BUSCARX",en:"XLOOKUP",sin:"=BUSCARX(valor_buscado; matriz_búsqueda; matriz_devuelta; [si_no_se_encuentra])",d:"Versión moderna de BUSCARV: busca en cualquier dirección y no depende del número de columna.",ej:'=BUSCARX(A2;F2:F20;H2:H20;"No existe")',r:'Devuelve el dato de H que corresponde a A2, o "No existe".'}
-];
 const ACTS=[
-{t:"Actividad 1 · SUMA y PROMEDIO",f:"actividades/actividad1_suma_promedio.xlsx",d:"Calcula totales y promedios de calificaciones."},
-{t:"Actividad 2 · SI y CONTAR.SI",f:"actividades/actividad2_si_contarsi.xlsx",d:"Decide aprobados y cuéntalos."}
+{t:"Básico · Actividad 1 · SUMA y PROMEDIO",f:"actividades/actividad1_suma_promedio.xlsx",d:"Calcula totales y promedios de calificaciones."},
+{t:"Intermedio · Actividad 2 · SI y CONTAR.SI",f:"actividades/actividad2_si_contarsi.xlsx",d:"Decide aprobados y cuéntalos."}
 ];
 const g=document.getElementById("grid"),fx=document.getElementById("fx");
 const data=[["Alumno","Parcial 1","Parcial 2","Promedio"],["Ana",8,9,"=PROMEDIO(B2:C2)"],["Luis",6,7,"=PROMEDIO(B3:C3)"],["Marta",10,9,"=PROMEDIO(B4:C4)"],["Total","=SUMA(B2:B4)","=SUMA(C2:C4)",""]];
@@ -109,10 +106,16 @@ g.innerHTML=h;
 g.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
 g.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");
 fx.textContent=show(+b.dataset.r,+b.dataset.c)||"(vacía)"});
-const list=document.getElementById("list");
-list.innerHTML=FUNCS.map(f=>`<details class="fn" data-k="${(f.es+" "+f.en).toLowerCase()}"><summary>${f.es}<small>en inglés: ${f.en}</small></summary><div class="b"><p>${f.d}</p><p><strong>Sintaxis:</strong> <code>${f.sin}</code></p><p><strong>Ejemplo:</strong> <code>${f.ej}</code><br>${f.r}</p></div></details>`).join("");
-document.getElementById("q").addEventListener("input",e=>{const q=e.target.value.toLowerCase().trim();
-list.querySelectorAll(".fn").forEach(d=>d.hidden=!d.dataset.k.includes(q))});
+const list=document.getElementById("list"),cnt=document.getElementById("cnt");
+let niv=0;const NL=["","Básico","Intermedio","Avanzado"];
+function render(){const q=document.getElementById("q").value.toLowerCase().trim();
+const r=FUNCS.filter(f=>(!niv||f[0]===niv)&&(f[1]+" "+f[2]).toLowerCase().includes(q));
+cnt.textContent=r.length+" función"+(r.length===1?"":"es");
+list.innerHTML=r.map(f=>`<details class="fn"><summary>${f[1]}<small>en inglés: ${f[2]} · ${NL[f[0]]}</small></summary><div class="b"><p>${f[4]}</p><p><strong>Sintaxis:</strong> <code>${f[3]}</code></p><p><strong>Ejemplo:</strong> <code>${f[5]}</code></p></div></details>`).join("")}
+document.getElementById("q").addEventListener("input",render);
+document.getElementById("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;niv=+b.dataset.n;
+document.querySelectorAll("#tabs button").forEach(x=>x.setAttribute("aria-pressed",x===b));render()});
+render();
 document.getElementById("acts").innerHTML=ACTS.map(a=>`<a href="${a.f}" download><strong>${a.t}</strong>${a.d}</a>`).join("");
 </script>
 <script type="module" src="auth.js"></script>

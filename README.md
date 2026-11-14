@@ -8,7 +8,7 @@ Plataforma de clases de Excel: funciones explicadas (español/inglés) y activid
 3. Tu sitio quedará en `https://TU-USUARIO.github.io/NOMBRE-DEL-REPO/`.
 
 ## Agregar contenido
-- Funciones: edita la lista `FUNCS` en `index.html`.
+- Funciones: agrega una línea en `funciones.js` (nivel 1 básico, 2 intermedio, 3 avanzado).
 - Actividades: pon el .xlsx en `actividades/` y agrégalo a la lista `ACTS`.
 
 ## Acceso de alumnos con Firebase
